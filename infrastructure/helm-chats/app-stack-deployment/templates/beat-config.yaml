@@ -4,11 +4,11 @@ metadata:
   name: beat-config
   namespace: sohel-space
 data:
-  filebeat.yml: |
+  filebeat: |
     filebeat.inputs:
       - type: log
         paths:
-          - /tmp/service-logs/service-log.json
+          - /tmp/service-logs/service.json
 
     output:
       logstash:

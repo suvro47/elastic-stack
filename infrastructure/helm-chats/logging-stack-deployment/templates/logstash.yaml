@@ -77,8 +77,9 @@ spec:
             - key: logstash.conf
               path: logstash.conf
 ---
-kind: Service
+
 apiVersion: v1
+kind: Service
 metadata:
   name: logstash-service
   namespace: logging-space
@@ -89,4 +90,3 @@ spec:
   - protocol: TCP
     port: 5044
     targetPort: 5044
-  type: ClusterIP

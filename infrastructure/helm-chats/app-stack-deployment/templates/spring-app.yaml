@@ -28,9 +28,9 @@ spec:
         image: elastic/filebeat:7.8.0
         imagePullPolicy: IfNotPresent
         args: [
-           "-c", "/etc/filebeat/filebeat.yml",
-           "-e"
-         ]
+          "-c", "/etc/filebeat/filebeat.yml",
+          "-e"
+        ]
         volumeMounts:
          - name: log-volume
            mountPath: /tmp/service-logs/
