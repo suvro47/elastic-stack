@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maintenance-page-deployment
+  labels:
+    app: maintenance-page
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: maintenance-page
+  template:
+    metadata:
+      labels:
+        app: maintenance-page
+    spec:
+      containers:
+      - name: maintenance-page
+        image: dsinnovators/ieims-maintainance-page:v3.24.2
+        ports:
+        - containerPort: 80
+          protocol: TCP
+      imagePullSecrets:
+      - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: maintenance-page-service
+spec:
+  type: ClusterIP
+  selector:
+    app: maintenance-page
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

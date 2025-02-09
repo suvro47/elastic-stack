@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logging-stack-config
+  namespace: logging-space
+data:
+  DEFAULT_TIMEZONE: Asia/Dhaka

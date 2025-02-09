@@ -23,12 +23,11 @@ import com.crudapp.service.UserService;
 public class UserServiceImpl implements UserService {
 
 	private UserRepository userRepository;
-	
-	private String UPLOAD_DIR = System.getProperty("user.dir") 
-								+ "/src/main/resources/static/uploads/";
-	
+
+	private String UPLOAD_DIR = System.getProperty("user.dir") + "/src/main/resources/static/uploads/";
+
 	Path rootLocation = Paths.get(UPLOAD_DIR);
-	
+
 	public UserServiceImpl(UserRepository userRepository) {
 		super();
 		this.userRepository = userRepository;
@@ -38,22 +37,21 @@ public class UserServiceImpl implements UserService {
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
 	}
-	
+
 	@Override
 	public Integer getUsersCount() {
 		return (int) userRepository.count();
 	}
 
-
 	@Override
 	public List<User> getUsersByPagination(int pageNo, int pageSize) {
-		
-		PageRequest pageReq = PageRequest.of(pageNo-1, pageSize);
+
+		PageRequest pageReq = PageRequest.of(pageNo - 1, pageSize);
 		Page<User> page = userRepository.findAll(pageReq);
-		
+
 		return page.getContent();
 	}
-	
+
 	@Override
 	public User getUserById(Long id) {
 		return userRepository.findById(id).get();
@@ -71,53 +69,45 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void deleteUser(Long id) {
-		userRepository.deleteById(id);		
+		userRepository.deleteById(id);
 	}
 
 	@Override
 	public String uploadImage(MultipartFile image) throws IOException {
-		
-		if(image != null && !image.isEmpty()) {
-						
+
+		if (image != null && !image.isEmpty()) {
+
 			String originalFilename = image.getOriginalFilename();
 			String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
 			String uniqueName = UUID.randomUUID().toString() + extension;
-			
+
 			Path path = Paths.get(UPLOAD_DIR + uniqueName);
 			Files.write(path, image.getBytes());
-			
+
 			System.out.println("UPLOAD PATH : " + UPLOAD_DIR + uniqueName);
 			return uniqueName;
-		}		
+		}
 		return null;
 	}
-	
+
 	@Override
-	public String encryptPassword(String password) {		
-		 int strength = 10; 
-		 BCryptPasswordEncoder bCryptPasswordEncoder =
-		  new BCryptPasswordEncoder(strength, new SecureRandom());
-		 String encodedPassword = bCryptPasswordEncoder.encode(password);
-		
+	public String encryptPassword(String password) {
+		int strength = 10;
+		BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(strength, new SecureRandom());
+		String encodedPassword = bCryptPasswordEncoder.encode(password);
+
 		return encodedPassword;
 	}
-	
+
 	@Override
 	public String updateImage(String oldImageName, MultipartFile image) throws IOException {
-		
-		if(image != null && !image.isEmpty()) {
+
+		if (image != null && !image.isEmpty()) {
 			File oldImage = new File(UPLOAD_DIR + oldImageName);
-			if(oldImage.exists() && oldImage.isFile()) {
+			if (oldImage.exists() && oldImage.isFile()) {
 				oldImage.delete();
 			}
 		}
 		return uploadImage(image);
 	}
-
-
-	
-
-	
-	
-
 }

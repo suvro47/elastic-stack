@@ -27,6 +27,4 @@ public interface UserService {
 	String updateImage(String oldImageName, MultipartFile image) throws IOException;
 	
 	String encryptPassword(String password);
-	
-	
 }

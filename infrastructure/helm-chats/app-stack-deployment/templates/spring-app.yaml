@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-app-deployment
+  namespace: sohel-space
+  labels:
+    app: spring-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-app
+  template:
+    metadata:
+      labels:
+        app: spring-app
+    spec:
+      containers:
+      - name: spring-app
+        image: 1602047/spring-app:v1.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+         - name: log-volume
+           mountPath: /tmp/service-logs/
+      - name: log-beat
+        image: elastic/filebeat:7.8.0
+        imagePullPolicy: IfNotPresent
+        args: [
+           "-c", "/etc/filebeat/filebeat.yml",
+           "-e"
+         ]
+        volumeMounts:
+         - name: log-volume
+           mountPath: /tmp/service-logs/
+         - name: beat-config
+           mountPath: /etc/filebeat/
+      volumes:
+      - name: log-volume
+        emptyDir: {}          
+      - name: beat-config
+        configMap:
+           name: beat-config
+           items:
+           - key: filebeat.yml
+             path: filebeat.yml
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-app-service
+  namespace: sohel-space
+spec:
+  selector:
+    app: spring-app  
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

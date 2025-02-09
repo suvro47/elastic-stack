@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: beat-config
+  namespace: sohel-space
+data:
+  filebeat.yml: |
+    filebeat.inputs:
+      - type: log
+        paths:
+          - /tmp/service-logs/service-log.json
+
+    output:
+      logstash:
+        hosts: ["logstash-service.logging-space.svc.cluster.local:5044"]

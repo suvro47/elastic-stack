@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: apm-server-curator
+  namespace: logging-space
+  labels:
+    app: apm-server
+    release: {{ .Release.Name | quote }}
+spec:
+  schedule: "0 2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: apm-server-curator
+          labels:
+            app: apm-server
+            release: {{ .Release.Name | quote }}
+        spec:
+          restartPolicy: "Never"
+          containers:
+            - name: ingestor
+              # https://www.elastic.co/guide/en/elasticsearch/client/curator/6.0/docker.html
+              image: untergeek/curator:6.0.0
+              command:
+                [
+                  "sh",
+                  "-c",
+                  '/curator/curator_cli --host elasticsearch-logging delete-indices --filter_list ''[{"filtertype":"age","source":"creation_date","direction":"older","unit":"{{ .Values.curator.unit }}","unit_count":{{ .Values.curator.unit_count }}},{"filtertype":"pattern","kind":"prefix","value":"apm"}]'' || true',
+                ]
+      backoffLimit: 1
